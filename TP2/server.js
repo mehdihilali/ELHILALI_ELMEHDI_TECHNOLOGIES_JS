@@ -24,11 +24,49 @@ app.post('/createItem', (req, res) => {
 });
 
 // GET : retrieve all items
-app.get('/items', (req, res) => {
+app.get('/AllItems', (req, res) => {
     console.log('GET request received for /items');
     res.json(items); // Return all items as a JSON response
 });
 
+//  GET : Endpoint by ID (Retrieve a Specific Item)
+app.get('/item/:id', (req, res) => {
+    const { id } = req.params;
+    const item = items.find(i => i.id === id);
+    if (item) {
+      res.json(item);
+    } else {
+      res.status(404).send('Item not found');
+    }
+});
+
+// PUT : Endpoint (Update an Item)
+app.put('/items/:id', (req, res) => {
+    const { id } = req.params;
+    const index = items.findIndex(i => i.id === id); // Compare as string
+
+    if (index !== -1) {
+        // Merge existing item with updated data
+        items[index] = { ...items[index], ...req.body };
+        res.send('Item updated');
+    } else {
+        res.status(404).send('Item not found');
+    }
+});
+
+// DELETE
+app.delete('/items/:id', (req, res) => {
+    const { id } = req.params;
+    const index = items.findIndex(i => i.id === id);
+    if (index !== -1) {
+      items.splice(index, 1);
+      res.send('Item deleted');
+    } else {
+      res.status(404).send('Item not found');
+    }
+});
+  
+  
 
 app.listen(port, () => {
     console.log(`Node.js server started on port: ${port}`);
